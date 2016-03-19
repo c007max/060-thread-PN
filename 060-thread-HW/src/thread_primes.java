@@ -1,0 +1,95 @@
+class thread_primes extends Thread
+{
+	int threadie;	int iPrimes;
+	static	 int a = 0;
+	static	 int b = 0;
+
+	public thread_primes(int threadID,int i0)
+	{
+		threadie = threadID;
+		iPrimes	= i0;
+	}
+
+	public void run()
+	{
+		int n0	= iPrimes ;
+		int c = 2 * n0 / 3;	   
+
+		for (int ii = 0; ii < n0; ii++)
+		{
+			if(threadie == 1)
+			{
+				if (ii < c)
+				{
+					if ((thread_primes.isPrime(ii))) 
+					{ 
+						a++;  
+					}
+				}
+			}
+
+			if(threadie == 2)
+			{
+				if (ii >= c )
+				{
+					if ((thread_primes.isPrime(ii))) 
+					{ 
+						b++; 
+					}
+				}
+			}
+		}
+
+		if(threadie == 1)  
+			System.out.printf("Thread:%d lt %d contains %d primes\n" 
+					,threadie 
+					,n0
+					,a
+					);
+		if(threadie == 2)  
+			System.out.printf("Thread:%d ge %d contains %d primes\n" 
+					,threadie 
+					,n0
+					,b
+					);
+	}
+
+	static boolean isPrime(long n0)
+	{
+		if (n0 <= 1) return false;
+		double limit = Math.sqrt(n0);
+		for (long i = 2; i <= limit; i++)
+		{
+			if (n0 % i == 0) return false;
+		}
+		return true;
+	}
+
+
+	public static void main(String[] arg)
+	{
+		int	iPrimes	= 20000;
+		
+		Thread th1 = new thread_primes(1,iPrimes);
+		Thread th2 = new thread_primes(2,iPrimes);
+		th1.start();
+		th2.start();
+		try 
+		{ 
+			th1.join(); 
+		}
+		catch (InterruptedException ie) { }
+		
+		try 
+		{ 
+			th2.join(); 
+		}
+		catch (InterruptedException ie) { }
+
+		System.out.println("\nThreads 1 and 2 have finished");
+		System.out.printf("Number of primes is: %d"
+				,a+b
+				);
+	}
+}
+
